@@ -10,8 +10,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
     
-    # Gemini
-    GEMINI_API_KEY: str = ""
+    # AI - Grok (X.AI)
+    GROK_API_KEY: str = ""
     
     # Environment
     ENVIRONMENT: str = "development"

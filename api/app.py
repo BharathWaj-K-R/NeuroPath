@@ -12,7 +12,7 @@ from api.models.schemas import (
     LearningPathCreate, LearningPathResponse
 )
 from api.utils.auth import hash_password, verify_password, create_access_token, get_current_user
-from api.services.gemini_service import GeminiService
+from api.services.grok_service import GrokService
 
 load_dotenv()
 
@@ -142,9 +142,9 @@ async def generate_learning_path(
     if not topic:
         raise HTTPException(status_code=400, detail="Topic required")
     
-    # Generate content via Gemini
-    gemini = GeminiService()
-    content = await gemini.generate_learning_path(
+    # Generate content via Grok
+    grok = GrokService()
+    content = await grok.generate_learning_path(
         topic=topic,
         difficulty=difficulty,
         goals=request.get("goals")

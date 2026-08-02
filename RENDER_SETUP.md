@@ -25,7 +25,7 @@
    ```
    DATABASE_URL=mysql+pymysql://user:pass@mysql-host:3306/neuropath
    JWT_SECRET_KEY=your-random-secret-key-min-32-chars
-   GEMINI_API_KEY=your-google-gemini-api-key
+   GROK_API_KEY=your-google-gemini-api-key
    ENVIRONMENT=production
    DEBUG=false
    FRONTEND_URL=https://neuropath-frontend.onrender.com
@@ -57,8 +57,8 @@
   - Generate: `openssl rand -base64 32`
   - Min 32 chars, keep safe
   
-- **GEMINI_API_KEY**: Google Generative AI API key
-  - Get from: https://makersuite.google.com/app/apikey
+- **GROK_API_KEY**: Grok API key
+  - Get from: https://console.x.ai/app/apikey
   - Requires billing enabled
 
 - **FRONTEND_URL**: Frontend service URL
@@ -81,7 +81,7 @@
 - [ ] Backend service created + env vars set
 - [ ] Frontend service created + env vars set
 - [ ] MySQL database provisioned + connection verified
-- [ ] GEMINI_API_KEY configured
+- [ ] GROK_API_KEY configured
 - [ ] JWT_SECRET_KEY generated
 - [ ] Services deployed (auto-builds on push to main)
 - [ ] Health check: `https://neuropath-backend.onrender.com/api/health`

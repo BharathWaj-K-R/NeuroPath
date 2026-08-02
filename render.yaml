@@ -12,7 +12,7 @@ services:
       - key: JWT_SECRET_KEY
         scope: run
         value: ""
-      - key: GEMINI_API_KEY
+      - key: GROK_API_KEY
         scope: run
         value: ""
       - key: ENVIRONMENT
