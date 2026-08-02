@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: neuropath-backend
+    name: neuropath
     env: python
     plan: free
     buildCommand: pip install -r api/requirements.txt
