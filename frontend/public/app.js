@@ -97,7 +97,8 @@
       headers: headers,
       body: options.body ? JSON.stringify(options.body) : undefined,
     }).then(function (res) {
-      if (res.status === 401) {
+      var isAuthEndpoint = path === "/auth/login" || path === "/auth/register";
+      if (res.status === 401 && !isAuthEndpoint) {
         logout(true);
         var err = new Error("Your session expired. Please log in again.");
         err.status = 401;
