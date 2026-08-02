@@ -2,11 +2,11 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    # Database
-    DATABASE_URL: str = "mysql+pymysql://user:password@localhost:3306/neuropath"
+    # Database - use SQLite by default (zero config)
+    DATABASE_URL: str = "sqlite:///./neuropath.db"
     
     # JWT
-    JWT_SECRET_KEY: str = "your-secret-key-change-this"
+    JWT_SECRET_KEY: str = "your-secret-key-change-this-in-production"
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
     
@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # Frontend
-    FRONTEND_URL: Optional[str] = "http://localhost:5173"
+    FRONTEND_URL: Optional[str] = "http://localhost:8000"
     
     class Config:
         env_file = ".env"
