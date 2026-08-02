@@ -252,3 +252,79 @@ a:hover { text-decoration: underline; }
   .page-head h2 { font-size: 21px; }
   .auth-card { padding: 26px 20px; }
 }
+
+/* ---------- Icon button (delete) ---------- */
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border);
+  background: #fff; color: var(--text-muted); cursor: pointer; flex-shrink: 0;
+  transition: background var(--t), color var(--t), border-color var(--t);
+}
+.icon-btn svg { width: 16px; height: 16px; }
+.icon-btn.danger:hover { background: #fff5f5; color: var(--red); border-color: #fed7d7; }
+.path-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.path-card-top h3 { flex: 1; }
+
+/* ---------- Interactive modules ---------- */
+.module-list { display: flex; flex-direction: column; gap: 10px; }
+.module {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.module.done { border-color: #c6f6d5; }
+.module-header {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer;
+  user-select: none;
+}
+.module-check input { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
+.module-title { flex: 1; font-weight: 600; font-size: 15px; }
+.module.done .module-title { color: var(--green); }
+.module-chevron { color: var(--text-muted); font-size: 13px; }
+.module-body { padding: 0 16px 18px 46px; font-size: 14.5px; color: var(--text); }
+.module-body p { margin-bottom: 10px; }
+.module-body h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); margin: 12px 0 6px; }
+.module-body ul { margin: 0 0 10px 18px; }
+.module-body li { margin-bottom: 4px; }
+
+/* ---------- Quiz ---------- */
+.quiz-q { margin-bottom: 18px; }
+.quiz-q-text { font-weight: 600; font-size: 14.5px; margin-bottom: 10px; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 9px 12px;
+  border: 1px solid var(--border); border-radius: 9px; cursor: pointer; transition: border-color var(--t), background var(--t);
+}
+.quiz-option:hover { border-color: var(--purple); background: var(--purple-soft); }
+.quiz-option input { accent-color: var(--purple); }
+.quiz-result-badge {
+  display: inline-block; font-size: 18px; font-weight: 700; padding: 10px 22px;
+  border-radius: 999px; background: var(--purple-soft); color: var(--purple);
+}
+.gen-loading { display: flex; justify-content: center; padding: 30px 0; }
+.spinner.big { width: 32px; height: 32px; border-width: 3px; border-color: rgba(102,126,234,0.25); border-top-color: var(--purple); }
+
+/* ---------- Chat ---------- */
+.chat-wrap {
+  display: flex; flex-direction: column; height: 68vh; background: #fff;
+  border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-sm); overflow: hidden;
+}
+.chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.chat-empty { color: var(--text-muted); font-size: 14.5px; text-align: center; margin-top: 30px; }
+.chat-msg { display: flex; }
+.chat-msg.user { justify-content: flex-end; }
+.chat-bubble {
+  max-width: 72%; padding: 11px 15px; border-radius: 14px; font-size: 14.5px; line-height: 1.5;
+  white-space: pre-wrap;
+}
+.chat-msg.user .chat-bubble { background: var(--purple); color: #fff; border-bottom-right-radius: 4px; }
+.chat-msg.assistant .chat-bubble { background: var(--gray-bg); color: var(--text); border-bottom-left-radius: 4px; }
+.chat-bubble.typing { display: flex; gap: 4px; align-items: center; padding: 14px 16px; }
+.chat-bubble.typing span {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted);
+  animation: bounce 1.2s infinite;
+}
+.chat-bubble.typing span:nth-child(2) { animation-delay: 0.15s; }
+.chat-bubble.typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+.chat-input-row { display: flex; gap: 10px; padding: 14px; border-top: 1px solid var(--border); }
+.chat-input-row .input { flex: 1; }

@@ -43,6 +43,7 @@ class Progress(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
     learning_path_id = Column(Integer, ForeignKey("learning_paths.id"))
     completion_percentage = Column(Float, default=0.0)
+    completed_modules = Column(Text, default="[]")
     last_accessed = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     status = Column(String(50), default="in_progress")
     
