@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -37,6 +37,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files BEFORE routes so /api/* routes take priority
+frontend_path = Path(__file__).parent.parent / "frontend" / "public"
+if frontend_path.exists():
+    app.mount("/static", StaticFiles(directory=str(frontend_path), html=False), name="static")
+
 # Init DB on startup (optional, won't block if DB unavailable)
 @app.on_event("startup")
 def startup():
@@ -48,8 +53,17 @@ def startup():
         pass
 
 # Routes
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
+    """Serve frontend index.html"""
+    try:
+        with open(Path(__file__).parent.parent / "frontend" / "public" / "index.html", "r") as f:
+            return f.read()
+    except:
+        return "<h1>NeuroPath API</h1><p>Frontend not found. API available at /api/*</p>"
+
+@app.get("/api")
+async def api_root():
     return {"message": "NeuroPath API v0.1.0", "status": "running"}
 
 @app.get("/api/health")
@@ -176,11 +190,6 @@ async def generate_learning_path(
         "content": content,
         "created_at": path.created_at
     }
-
-# Serve static frontend files
-frontend_path = Path(__file__).parent.parent / "frontend" / "public"
-if frontend_path.exists():
-    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
