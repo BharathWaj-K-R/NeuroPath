@@ -4,12 +4,7 @@ from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 from api.config.settings import settings
 
-# SQLite doesn't need echo or connection pooling for single server
-engine = create_engine(
-    settings.DATABASE_URL,
-    echo=False,
-    connect_args={"check_same_thread": False} if "sqlite" in settings.DATABASE_URL else {}
-)
+engine = create_engine(settings.DATABASE_URL, echo=False, pool_pre_ping=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

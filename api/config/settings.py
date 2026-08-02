@@ -2,8 +2,8 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    # Database - use SQLite by default (zero config)
-    DATABASE_URL: str = "sqlite:///./neuropath.db"
+    # Database - use PostgreSQL from env (Render provides it)
+    DATABASE_URL: str = "postgresql://user:password@localhost/neuropath"
     
     # JWT
     JWT_SECRET_KEY: str = "your-secret-key-change-this-in-production"
@@ -15,10 +15,7 @@ class Settings(BaseSettings):
     
     # Environment
     ENVIRONMENT: str = "development"
-    DEBUG: bool = True
-    
-    # Frontend
-    FRONTEND_URL: Optional[str] = "http://localhost:8000"
+    DEBUG: bool = False
     
     class Config:
         env_file = ".env"
