@@ -3,7 +3,7 @@
   "use strict";
 
   /* ---------------- constants ---------------- */
-  var API = "/api";
+  var API = window.__API_URL__ || "/api";
   var TOKEN_KEY = "neuropath_token";
   var USER_KEY = "neuropath_user";
   var LOCAL_PATHS = "neuropath_paths";

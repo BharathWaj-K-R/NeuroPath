@@ -6,12 +6,24 @@
     <title>NeuroPath — AI Learning Paths</title>
     <meta name="description" content="NeuroPath generates personalized AI-powered learning paths. Sign in, pick a topic, and track your progress." />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/neuropath/styles.css" />
+    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <div id="app" aria-live="polite"></div>
     <div id="modal-root"></div>
     <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
-    <script src="/neuropath/app.js"></script>
+    
+    <script>
+      // Configure API URL for environment
+      (function() {
+        var isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        if (!isDev) {
+          // In production, API URL comes from env or defaults to same origin
+          window.__API_URL__ = window.__API_URL__ || (window.location.origin + "/api");
+        }
+      })();
+    </script>
+    
+    <script src="./app.js"></script>
   </body>
 </html>

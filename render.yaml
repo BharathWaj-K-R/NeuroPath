@@ -25,11 +25,12 @@ services:
 
   - type: web
     name: neuropath-frontend
-    env: node
+    env: static
     plan: free
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm run preview
+    staticSite: true
+    buildCommand: "echo 'No build needed for static files'"
+    publicPath: frontend/public
     envVars:
-      - key: VITE_API_URL
+      - key: API_URL
         scope: run
         value: ""
