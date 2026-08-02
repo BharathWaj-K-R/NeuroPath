@@ -1,9 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
 import os
 from datetime import timedelta
+from pathlib import Path
 
 # Import DB, models, schemas, auth
 from api.database import init_db, get_db, User, LearningPath, Progress
@@ -174,6 +176,11 @@ async def generate_learning_path(
         "content": content,
         "created_at": path.created_at
     }
+
+# Serve static frontend files
+frontend_path = Path(__file__).parent.parent / "frontend" / "public"
+if frontend_path.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_path), html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn

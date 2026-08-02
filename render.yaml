@@ -19,10 +19,3 @@ services:
         value: production
       - key: DEBUG
         value: "false"
-      - key: FRONTEND_URL
-        scope: run
-        value: ""
-
-  - type: static_site
-    name: neuropath-frontend
-    staticPublishPath: frontend/public
