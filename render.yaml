@@ -23,14 +23,6 @@ services:
         scope: run
         value: ""
 
-  - type: web
+  - type: static_site
     name: neuropath-frontend
-    env: static
-    plan: free
-    staticSite: true
-    buildCommand: "echo 'No build needed for static files'"
-    publicPath: frontend/public
-    envVars:
-      - key: API_URL
-        scope: run
-        value: ""
+    staticPublishPath: frontend/public

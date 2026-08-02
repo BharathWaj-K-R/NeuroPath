@@ -35,10 +35,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Init DB on startup
+# Init DB on startup (optional, won't block if DB unavailable)
 @app.on_event("startup")
 def startup():
-    init_db()
+    try:
+        init_db()
+    except Exception as e:
+        print(f"Warning: Could not initialize database on startup: {e}")
+        print("Database will be initialized on first request or manually.")
+        pass
 
 # Routes
 @app.get("/")
