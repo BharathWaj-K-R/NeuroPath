@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: neuropath-backend
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn api.app:app --host 0.0.0.0 --port 8000"
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        scope: run
+      - key: JWT_SECRET_KEY
+        scope: run
+      - key: GEMINI_API_KEY
+        scope: run
+      - key: ENVIRONMENT
+        value: production
+      - key: FRONTEND_URL
+        scope: run
+
+  - type: web
+    name: neuropath-frontend
+    env: node
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm run preview"
+    plan: free
+    buildDir: frontend
+    envVars:
+      - key: VITE_API_URL
+        scope: run
