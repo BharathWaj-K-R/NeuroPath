@@ -1,6 +1,6 @@
 # NeuroPath
 
-AI-powered personalized learning platform using Gemini API, FastAPI backend, React frontend.
+AI-powered personalized learning platform using Grok (x.ai) API, FastAPI backend, vanilla JS frontend.
 
 ## Stack
 
@@ -8,7 +8,7 @@ AI-powered personalized learning platform using Gemini API, FastAPI backend, Rea
 - **Backend**: Python 3.11 + FastAPI
 - **Database**: MySQL
 - **Auth**: JWT
-- **AI**: Gemini API
+- **AI**: Grok API (x.ai)
 - **Deploy**: Render
 
 ## Local Setup
@@ -42,7 +42,7 @@ Copy `.env.example` → `.env` and fill:
 ```
 DATABASE_URL=mysql+pymysql://user:pass@host:3306/neuropath
 JWT_SECRET_KEY=<random>
-GEMINI_API_KEY=<your_key>
+GROK_API_KEY=<your_key>
 ```
 
 ## Deployment
