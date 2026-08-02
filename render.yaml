@@ -8,16 +8,20 @@ services:
     envVars:
       - key: DATABASE_URL
         scope: run
+        value: ""
       - key: JWT_SECRET_KEY
         scope: run
+        value: ""
       - key: GEMINI_API_KEY
         scope: run
+        value: ""
       - key: ENVIRONMENT
         value: production
       - key: DEBUG
         value: "false"
       - key: FRONTEND_URL
         scope: run
+        value: ""
 
   - type: web
     name: neuropath-frontend
@@ -28,3 +32,4 @@ services:
     envVars:
       - key: VITE_API_URL
         scope: run
+        value: ""
