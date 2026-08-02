@@ -18,8 +18,8 @@
       (function() {
         var isDev = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
         if (!isDev) {
-          // In production, API URL comes from env or defaults to same origin
-          window.__API_URL__ = window.__API_URL__ || (window.location.origin + "/api");
+          // In production, point at the actual backend service (separate origin)
+          window.__API_URL__ = window.__API_URL__ || "https://neuropath-backend-tj0h.onrender.com/api";
         }
       })();
     </script>
