@@ -10,8 +10,9 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
     
-    # AI - Grok (X.AI)
-    GROK_API_KEY: str = ""
+    # AI - Groq and Grok(X.AI)
+    GROQ_API_KEY: str
+    GROK_API_KEY: str | None = None
     
     # Environment
     ENVIRONMENT: str = "production"

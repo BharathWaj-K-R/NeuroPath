@@ -23,9 +23,9 @@ def _extract_json(text: str):
 
 class GrokService:
     def __init__(self):
-        self.api_key = settings.GROK_API_KEY
-        self.base_url = "https://api.x.ai/v1"
-        self.model = "grok-2"
+        self.api_key = settings.GROQ_API_KEY
+        self.base_url = "https://api.groq.com/openai/v1"
+        self.model = "llama-3.3-70b-versatile"
 
     async def _complete(self, messages, max_tokens=2000, temperature=0.7):
         async with httpx.AsyncClient() as client:
