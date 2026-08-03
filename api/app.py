@@ -24,37 +24,27 @@ load_dotenv()
 
 app = FastAPI(title="NeuroPath API", version="0.1.0")
 
-# CORS
-origins = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
-]
-
-if os.getenv("ENVIRONMENT") == "production":
-    # Production: allow all origins (frontend is served via Render)
-    origins = ["*"]
-else:
-    # Dev: add specific production URLs
-    origins.extend([
-        "https://neuropath-frontend.onrender.com",
-        "https://neuropath-backend.onrender.com",
-    ])
-
+# CORS - ALWAYS allow all origins (critical for cross-origin requests)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Force allow all
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["*"],
+    max_age=3600,
+    expose_headers=["*"],
 )
 
 # Mount static files BEFORE routes so /api/* routes take priority
 frontend_path = Path(__file__).parent.parent / "frontend" / "public"
 if frontend_path.exists():
     app.mount("/static", StaticFiles(directory=str(frontend_path), html=False), name="static")
+
+# OPTIONS handler for CORS preflight
+@app.options("/{full_path:path}")
+async def preflight(full_path: str):
+    """Handle CORS preflight requests"""
+    return {"status": "ok"}
 
 # Init DB on startup (optional, won't block if DB unavailable)
 @app.on_event("startup")

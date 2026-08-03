@@ -2,8 +2,8 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    # Database - use PostgreSQL from env (Render provides it)
-    DATABASE_URL: str = "postgresql://user:password@localhost/neuropath"
+    # Database - Use internal Render link for Render-to-Render
+    DATABASE_URL: str = "postgresql://neuropath_s6s3_user:WyTSkQDcNQhl9HORr9Y9Pa5JeoyGsYK1@dpg-d9nd6061egvs73frc7qg-a/neuropath_s6s3"
     
     # JWT
     JWT_SECRET_KEY: str = "your-secret-key-change-this-in-production"
@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     GROK_API_KEY: str = ""
     
     # Environment
-    ENVIRONMENT: str = "development"
+    ENVIRONMENT: str = "production"
     DEBUG: bool = False
     
     class Config:
