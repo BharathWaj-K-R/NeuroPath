@@ -139,21 +139,53 @@ async def health_check():
 # Auth routes
 @app.post("/api/auth/register", response_model=TokenResponse)
 async def register(user: UserRegister, db: Session = Depends(get_db)):
+    # Check if email already exists
     existing = db.query(User).filter(User.email == user.email).first()
     if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise HTTPException(
+            status_code=400,
+            detail="Email already registered"
+        )
 
-    hashed_pwd = hash_password(user.password)
+    # Debug logs (remove after fixing)
+    print("=" * 50)
+    print("REGISTER REQUEST")
+    print(f"Email      : {user.email}")
+    print(f"Password   : {repr(user.password)}")
+    print(f"Characters : {len(user.password)}")
+    print(f"Bytes      : {len(user.password.encode('utf-8'))}")
+    print("=" * 50)
+
+    # Prevent bcrypt crash
+    if len(user.password.encode("utf-8")) > 72:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must not exceed 72 bytes."
+        )
+
+    try:
+        hashed_pwd = hash_password(user.password)
+    except Exception as e:
+        print("Hash Error:", str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Password hashing failed: {str(e)}"
+        )
+
+    # Create new user
     new_user = User(
         email=user.email,
         full_name=user.full_name,
         hashed_password=hashed_pwd
     )
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
+    # Generate JWT
     access_token = create_access_token(data={"sub": new_user.email})
+
     return {
         "access_token": access_token,
         "token_type": "bearer",
