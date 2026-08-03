@@ -35,7 +35,18 @@
     modal: null,
     openModules: {},
     // generate/quiz wizard
-    gen: { step: "form", topic: "", difficulty: "Intermediate", goals: "", quiz: null, answers: [], level: null, busy: false, error: "" },
+   gen: {
+    step: "form",
+    topic: "",
+    difficulty: "Intermediate",
+    goals: "",
+    quiz: null,
+    answers: [],
+    currentQuestion: 0,
+    level: null,
+    busy: false,
+    error: ""
+},
     // chat
     chat: { messages: [], sending: false },
   };
@@ -458,27 +469,66 @@
         '<div class="modal-actions"><button class="btn btn-secondary btn-block" type="button" data-action="close-modal">Cancel</button></div>' +
         "</form>";
     } else if (g.step === "quiz") {
-      var qs = (g.quiz && g.quiz.questions) || [];
-      inner =
-        '<h2>Quick Skill Quiz</h2>' +
-        '<p class="sub">A few questions on “' + esc(g.topic) + '” to calibrate your path.</p>' +
-        '<div id="gen-alert"></div>' +
-        '<form id="quiz-form" novalidate>' +
-        qs.map(function (q, qi) {
-          return (
-            '<div class="quiz-q"><p class="quiz-q-text">' + (qi + 1) + ". " + esc(q.question) + "</p>" +
-            '<div class="quiz-options">' +
-            q.options.map(function (opt, oi) {
-              var id = "q" + qi + "o" + oi;
-              var checked = g.answers[qi] === oi ? "checked" : "";
-              return '<label class="quiz-option"><input type="radio" name="quiz-q-' + qi + '" value="' + oi + '" ' + checked + ' /> ' + esc(opt) + "</label>";
-            }).join("") +
-            "</div></div>"
-          );
-        }).join("") +
-        '<button class="btn btn-primary btn-block btn-lg" type="submit">See My Level</button>' +
-        '<div class="modal-actions"><button class="btn btn-secondary btn-block" type="button" data-action="skip-quiz">Skip, pick difficulty manually</button></div>' +
-        "</form>";
+  var qs = (g.quiz && g.quiz.questions) || [];
+  var current = g.currentQuestion || 0;
+  var q = qs[current] || {
+    question: "",
+    options: []
+};
+  var progress = qs.length
+    ? Math.round(((current + 1) / qs.length) * 100)
+    : 0;
+  inner =
+    '<h2>Quick Skill Quiz</h2>' +
+    '<p class="sub">Question ' + (current + 1) + ' of ' + qs.length + '</p>' +
+
+    '<div class="progress" style="margin-bottom:20px">' +
+    '<i style="width:' + progress + '%"></i>' +
+    '</div>' +
+
+    '<form id="quiz-form" novalidate>' +
+
+    '<div class="quiz-q">' +
+      '<p class="quiz-q-text">' +
+        (current + 1) + '. ' + esc(q.question) +
+      '</p>' +
+
+      '<div class="quiz-options">' +
+
+      (q.options || []).map(function(opt, oi) {
+
+        var checked = g.answers[current] === oi ? "checked" : "";
+
+        return (
+          '<label class="quiz-option">' +
+          '<input type="radio" name="quiz-current" value="' + oi + '" ' + checked + '>' +
+          ' ' + esc(opt) +
+          '</label>'
+        );
+
+      }).join("") +
+
+      '</div>' +
+
+    '</div>' +
+
+'<div class="modal-actions" style="display:flex;justify-content:space-between;margin-top:20px;">' +
+
+'<button class="btn btn-secondary" type="button" data-action="prev-question" ' +
+(current === 0 ? 'disabled' : '') +
+'>← Previous</button>' +
+
+(
+    current < qs.length - 1
+        ? '<button class="btn btn-primary" type="button" data-action="next-question">Next →</button>'
+        : '<button class="btn btn-primary" type="submit">Finish Quiz</button>'
+) +
+
+'</div>' +
+
+    '</form>';
+
+        
     } else if (g.step === "result") {
       inner =
         '<h2>Your Estimated Level</h2>' +
@@ -580,105 +630,203 @@
   }
 
   /* ---------------- events (delegated) ---------------- */
-  document.addEventListener("click", function (e) {
+document.addEventListener("click", function (e) {
+
     var tab = e.target.closest("[data-tab]");
     if (tab) {
-      authView.mode = tab.dataset.tab;
-      render();
-      return;
+        authView.mode = tab.dataset.tab;
+        render();
+        return;
     }
 
     var nav = e.target.closest("[data-nav]");
     if (nav) {
-      e.preventDefault();
-      state.route = nav.dataset.nav;
-      state.sidebarOpen = false;
-      render();
-      return;
+        e.preventDefault();
+        state.route = nav.dataset.nav;
+        state.sidebarOpen = false;
+        render();
+        return;
     }
 
     var view = e.target.closest("[data-view-path]");
     if (view) {
-      e.preventDefault();
-      state.pathId = view.dataset.viewPath;
-      state.route = "path";
-      window.scrollTo(0, 0);
-      render();
-      return;
+        e.preventDefault();
+        state.pathId = view.dataset.viewPath;
+        state.route = "path";
+        window.scrollTo(0, 0);
+        render();
+        return;
     }
 
     var modToggle = e.target.closest('[data-action="toggle-module-open"]');
     if (modToggle) {
-      var key = modToggle.dataset.id + ":" + modToggle.dataset.idx;
-      state.openModules[key] = !state.openModules[key];
-      render();
-      return;
+        var key = modToggle.dataset.id + ":" + modToggle.dataset.idx;
+        state.openModules[key] = !state.openModules[key];
+        render();
+        return;
     }
 
     var act = e.target.closest("[data-action]");
+
     if (!act) {
-      if (e.target.hasAttribute && e.target.hasAttribute("data-overlay")) {
-        state.modal = null;
-        state.gen = { step: "form", topic: "", difficulty: "Intermediate", goals: "", quiz: null, answers: [], level: null, busy: false, error: "" };
-        render();
-      }
-      return;
+        if (e.target.hasAttribute && e.target.hasAttribute("data-overlay")) {
+            state.modal = null;
+            state.gen = {
+                step: "form",
+                topic: "",
+                difficulty: "Intermediate",
+                goals: "",
+                quiz: null,
+                answers: [],
+                currentQuestion: 0,
+                level: null,
+                busy: false,
+                error: ""
+            };
+            render();
+        }
+        return;
     }
+
     var action = act.dataset.action;
 
-    if (action === "logout") logout();
-    else if (action === "toggle-sidebar") {
-      state.sidebarOpen = !state.sidebarOpen;
-      render();
-    } else if (action === "open-generate") {
-      state.modal = "generate";
-      state.gen = { step: "form", topic: "", difficulty: "Intermediate", goals: "", quiz: null, answers: [], level: null, busy: false, error: "" };
-      render();
-    } else if (action === "close-modal") {
-      state.modal = null;
-      render();
-    } else if (action === "skip-quiz") {
-      var topicInput = document.getElementById("gen-topic");
-      if (topicInput) state.gen.topic = topicInput.value.trim();
-      var goalsInput = document.getElementById("gen-goals");
-      if (goalsInput) state.gen.goals = goalsInput.value.trim();
-      if (!state.gen.topic) {
-        state.gen.step = "form";
+    if (action === "logout") {
+
+        logout();
+
+    } else if (action === "toggle-sidebar") {
+
+        state.sidebarOpen = !state.sidebarOpen;
         render();
-        fieldError("gen-topic", "Please enter a topic.");
-        return;
-      }
-      state.gen.step = "manual";
-      render();
+
+    } else if (action === "open-generate") {
+
+        state.modal = "generate";
+        state.gen = {
+            step: "form",
+            topic: "",
+            difficulty: "Intermediate",
+            goals: "",
+            quiz: null,
+            answers: [],
+            currentQuestion: 0,
+            level: null,
+            busy: false,
+            error: ""
+        };
+        render();
+
+    } else if (action === "close-modal") {
+
+        state.modal = null;
+        render();
+
+    } else if (action === "skip-quiz") {
+
+        var topicInput = document.getElementById("gen-topic");
+        if (topicInput) state.gen.topic = topicInput.value.trim();
+
+        var goalsInput = document.getElementById("gen-goals");
+        if (goalsInput) state.gen.goals = goalsInput.value.trim();
+
+        if (!state.gen.topic) {
+            state.gen.step = "form";
+            render();
+            fieldError("gen-topic", "Please enter a topic.");
+            return;
+        }
+
+        state.gen.step = "manual";
+        render();
+
+    } else if (action === "next-question") {
+
+        var selected = document.querySelector('input[name="quiz-current"]:checked');
+
+        if (!selected) {
+            toast("Please select an answer first.", "error");
+            return;
+        }
+
+        state.gen.answers[state.gen.currentQuestion] =
+            parseInt(selected.value, 10);
+
+        if (state.gen.currentQuestion < state.gen.quiz.questions.length - 1) {
+            state.gen.currentQuestion++;
+        }
+
+        render();
+
+    } else if (action === "prev-question") {
+
+        var selectedPrev = document.querySelector('input[name="quiz-current"]:checked');
+
+        if (selectedPrev) {
+            state.gen.answers[state.gen.currentQuestion] =
+                parseInt(selectedPrev.value, 10);
+        }
+
+        if (state.gen.currentQuestion > 0) {
+            state.gen.currentQuestion--;
+        }
+
+        render();
+
     } else if (action === "confirm-generate") {
-      var sel = document.getElementById("gen-diff-confirm");
-      finalizeGenerate(sel ? sel.value : state.gen.level || "Intermediate");
+
+        var sel = document.getElementById("gen-diff-confirm");
+
+        finalizeGenerate(
+            sel ? sel.value : state.gen.level || "Intermediate"
+        );
+
     } else if (action === "complete") {
-      completePath(act, act.dataset.id);
+
+        completePath(act, act.dataset.id);
+
     } else if (action === "delete-path") {
-      deletePath(act.dataset.id);
+
+        deletePath(act.dataset.id);
+
     } else if (action === "delete-account") {
-      if (window.confirm("Delete your account and all learning paths? This cannot be undone.")) {
-        localStorage.removeItem(LOCAL_PATHS);
-        logout(true);
-        toast("Account deleted.", "error");
-      }
+
+        if (window.confirm("Delete your account and all learning paths? This cannot be undone.")) {
+
+            localStorage.removeItem(LOCAL_PATHS);
+
+            logout(true);
+
+            toast("Account deleted.", "error");
+        }
     }
-  });
+
+});
 
   document.addEventListener("change", function (e) {
-    var chk = e.target.closest('[data-action="toggle-module-done"]');
-    if (chk) {
-      toggleModuleDone(chk.dataset.id, parseInt(chk.dataset.idx, 10), chk.checked);
-    }
-  });
 
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && state.modal) {
-      state.modal = null;
-      render();
+    if (e.target.name === "quiz-current") {
+        state.gen.answers[state.gen.currentQuestion] =
+            parseInt(e.target.value, 10);
+        return;
     }
-  });
+
+    var chk = e.target.closest('[data-action="toggle-module-done"]');
+
+    if (chk) {
+        toggleModuleDone(
+            chk.dataset.id,
+            parseInt(chk.dataset.idx, 10),
+            chk.checked
+        );
+    }
+
+});
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && state.modal) {
+        state.modal = null;
+        render();
+    }
+});
 
   document.addEventListener("submit", function (e) {
     var form = e.target;
@@ -769,6 +917,7 @@
       .then(function (data) {
         state.gen.quiz = data;
         state.gen.answers = new Array((data.questions || []).length).fill(null);
+        state.gen.currentQuestion = 0;
         state.gen.step = "quiz";
         render();
       })
@@ -777,6 +926,7 @@
           var q = demoQuiz(topic);
           state.gen.quiz = q;
           state.gen.answers = new Array(q.questions.length).fill(null);
+          state.gen.currentQuestion = 0;
           state.gen.step = "quiz";
           render();
         } else {
@@ -787,28 +937,51 @@
   }
 
   function scoreQuiz(form) {
+
+    var selected = document.querySelector('input[name="quiz-current"]:checked');
+
+    if (selected) {
+        state.gen.answers[state.gen.currentQuestion] =
+            parseInt(selected.value, 10);
+    }
+
     var qs = state.gen.quiz.questions || [];
-    var answers = qs.map(function (q, qi) {
-      var picked = form.querySelector('input[name="quiz-q-' + qi + '"]:checked');
-      return picked ? parseInt(picked.value, 10) : -1;
-    });
-    state.gen.answers = answers;
+    var answers = state.gen.answers;
 
     var correct = 0;
-    var levelScore = { beginner: 0, intermediate: 0, advanced: 0 };
+    var levelScore = {
+        beginner: 0,
+        intermediate: 0,
+        advanced: 0
+    };
+
     qs.forEach(function (q, qi) {
-      if (answers[qi] === q.correct_index) {
-        correct++;
-        var lvl = (q.level || "intermediate").toLowerCase();
-        if (levelScore[lvl] != null) levelScore[lvl]++;
-      }
+
+        if (answers[qi] === q.correct_index) {
+
+            correct++;
+
+            var lvl = (q.level || "intermediate").toLowerCase();
+
+            if (levelScore[lvl] != null) {
+                levelScore[lvl]++;
+            }
+        }
+
     });
+
     var pct = qs.length ? correct / qs.length : 0;
-    var level = pct > 0.75 ? "Advanced" : pct > 0.4 ? "Intermediate" : "Beginner";
+
+    var level =
+        pct >= 0.75 ? "Advanced" :
+        pct >= 0.40 ? "Intermediate" :
+        "Beginner";
+
     state.gen.level = level;
     state.gen.step = "result";
+
     render();
-  }
+}
 
   function finalizeGenerate(difficulty) {
     var g = state.gen;
