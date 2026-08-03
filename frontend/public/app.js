@@ -767,12 +767,7 @@ document.addEventListener("click", function (e) {
         }
 
     }, 0);
-
-}
-
-        render();
-
-    }); else if (action === "prev-question") {
+} else if (action === "prev-question") {
 
         var selectedPrev = document.querySelector('input[name="quiz-current"]:checked');
 
