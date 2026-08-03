@@ -741,19 +741,34 @@ document.addEventListener("click", function (e) {
 
     } else if (action === "next-question") {
 
-        var selected = document.querySelector('input[name="quiz-current"]:checked');
+    var selected = document.querySelector('input[name="quiz-current"]:checked');
 
-        if (!selected) {
-            toast("Please select an answer first.", "error");
-            return;
+    if (!selected) {
+        toast("Please select an answer first.", "error");
+        return;
+    }
+
+    state.gen.answers[state.gen.currentQuestion] =
+        parseInt(selected.value, 10);
+
+    if (state.gen.currentQuestion < state.gen.quiz.questions.length - 1) {
+        state.gen.currentQuestion++;
+    }
+
+    render();
+
+    // Focus the first option of the next question
+    setTimeout(function () {
+
+        var first = document.querySelector('input[name="quiz-current"]');
+
+        if (first) {
+            first.focus();
         }
 
-        state.gen.answers[state.gen.currentQuestion] =
-            parseInt(selected.value, 10);
+    }, 0);
 
-        if (state.gen.currentQuestion < state.gen.quiz.questions.length - 1) {
-            state.gen.currentQuestion++;
-        }
+}
 
         render();
 
