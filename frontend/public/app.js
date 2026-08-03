@@ -332,7 +332,14 @@
   function moduleBlock(p, m, idx) {
     var isOpen = !!state.openModules[p.id + ":" + idx];
     var done = (p.completed_modules || []).indexOf(idx) !== -1;
-    var resources = (m.resources || []).map(function (r) { return "<li>" + esc(r) + "</li>"; }).join("");
+    var resources = (m.resources || []).map(function (r) {
+      var isUrl = /^https?:\/\//.test(r) || /^www\./.test(r);
+      if (isUrl) {
+        var href = /^https?:\/\//.test(r) ? r : "https://" + r;
+        return "<li><a href=\"" + esc(href) + "\" target=\"_blank\" rel=\"noopener noreferrer\">" + esc(r) + " ↗</a></li>";
+      }
+      return "<li>" + esc(r) + "</li>";
+    }).join("");
     var exercises = (m.exercises || []).map(function (r) { return "<li>" + esc(r) + "</li>"; }).join("");
     return (
       '<div class="module' + (done ? " done" : "") + '">' +
