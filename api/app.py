@@ -29,9 +29,19 @@ origins = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
 ]
+
 if os.getenv("ENVIRONMENT") == "production":
-    origins.append(os.getenv("FRONTEND_URL", "").rstrip("/"))
+    # Production: allow all origins (frontend is served via Render)
+    origins = ["*"]
+else:
+    # Dev: add specific production URLs
+    origins.extend([
+        "https://neuropath-frontend.onrender.com",
+        "https://neuropath-backend.onrender.com",
+    ])
 
 app.add_middleware(
     CORSMiddleware,
