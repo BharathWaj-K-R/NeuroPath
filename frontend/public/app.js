@@ -753,7 +753,7 @@ document.addEventListener("click", function (e) {
 
     if (state.gen.currentQuestion < state.gen.quiz.questions.length - 1) {
         state.gen.currentQuestion++;
-    }
+    };
 
     render();
 
@@ -772,7 +772,7 @@ document.addEventListener("click", function (e) {
 
         render();
 
-    } else if (action === "prev-question") {
+    }); else if (action === "prev-question") {
 
         var selectedPrev = document.querySelector('input[name="quiz-current"]:checked');
 
