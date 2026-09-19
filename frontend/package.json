@@ -1,0 +1,8 @@
+{
+  "name": "neuropath-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Static frontend - no build needed'"
+  }
+}
